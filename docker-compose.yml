@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: expense-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - mongo
+    networks:
+      - expense-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: expense-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - expense-net
+
+  mongo:
+    image: mongo
+    container_name: expense-mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - expense-net
+    volumes:
+      - mongo-data:/data/db
+
+networks:
+  expense-net:
+
+volumes:
+  mongo-data:

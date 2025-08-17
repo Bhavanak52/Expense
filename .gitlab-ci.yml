@@ -1,0 +1,17 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - docker-compose build
+  tags:
+    - docker
+
+deploy:
+  stage: deploy
+  script:
+    - docker-compose up -d
+  tags:
+    - docker
