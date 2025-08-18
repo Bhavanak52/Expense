@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: bhavanakajampady/expense-backend:latest
     container_name: expense-backend
     ports:
       - "5000:5000"
@@ -16,9 +14,7 @@ services:
       - expense-net
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: bhavanakajampady/expense-frontend:latest
     container_name: expense-frontend
     ports:
       - "3000:3000"
@@ -28,7 +24,7 @@ services:
       - expense-net
 
   mongo:
-    image: mongo
+    image: mongo:latest
     container_name: expense-mongo
     ports:
       - "27017:27017"
