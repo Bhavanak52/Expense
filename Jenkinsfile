@@ -13,11 +13,11 @@ pipeline {
             steps {
                 echo "Installing dependencies and building project..."
                 dir('backend') {
-                    sh 'npm ci'
+                    bat 'npm ci'
                 }
                 dir('frontend') {
-                    sh 'npm ci'
-                    sh 'npm run build'
+                    bat 'npm ci'
+                    bat 'npm run build'
                 }
             }
         }
@@ -28,14 +28,14 @@ pipeline {
                 script {
                     dir('backend') {
                         if (fileExists('test')) {
-                            sh 'npm test'
+                            bat 'npm test'
                         } else {
                             echo "No backend tests found, skipping."
                         }
                     }
                     dir('frontend') {
-                        if (fileExists('src/__tests__')) {
-                            sh 'npm test -- --watchAll=false'
+                        if (fileExists('src\\__tests__')) {
+                            bat 'npm test -- --watchAll=false'
                         } else {
                             echo "No frontend tests found, skipping."
                         }
@@ -47,8 +47,8 @@ pipeline {
         stage('Docker Build') {
             steps {
                 echo "Building Docker images..."
-                sh "docker build -t ${DOCKER_NAMESPACE}/${BACKEND_IMAGE}:${TAG} ./backend"
-                sh "docker build -t ${DOCKER_NAMESPACE}/${FRONTEND_IMAGE}:${TAG} ./frontend"
+                bat "docker build -t %DOCKER_NAMESPACE%/%BACKEND_IMAGE%:%TAG% ./backend"
+                bat "docker build -t %DOCKER_NAMESPACE%/%FRONTEND_IMAGE%:%TAG% ./frontend"
             }
         }
 
@@ -56,15 +56,15 @@ pipeline {
             steps {
                 echo "Pushing images to Docker Hub..."
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                    bat "echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin"
                     // Push backend
-                    sh "docker push ${DOCKER_NAMESPACE}/${BACKEND_IMAGE}:${TAG}"
-                    sh "docker tag ${DOCKER_NAMESPACE}/${BACKEND_IMAGE}:${TAG} ${DOCKER_NAMESPACE}/${BACKEND_IMAGE}:latest"
-                    sh "docker push ${DOCKER_NAMESPACE}/${BACKEND_IMAGE}:latest"
+                    bat "docker push %DOCKER_NAMESPACE%/%BACKEND_IMAGE%:%TAG%"
+                    bat "docker tag %DOCKER_NAMESPACE%/%BACKEND_IMAGE%:%TAG% %DOCKER_NAMESPACE%/%BACKEND_IMAGE%:latest"
+                    bat "docker push %DOCKER_NAMESPACE%/%BACKEND_IMAGE%:latest"
                     // Push frontend
-                    sh "docker push ${DOCKER_NAMESPACE}/${FRONTEND_IMAGE}:${TAG}"
-                    sh "docker tag ${DOCKER_NAMESPACE}/${FRONTEND_IMAGE}:${TAG} ${DOCKER_NAMESPACE}/${FRONTEND_IMAGE}:latest"
-                    sh "docker push ${DOCKER_NAMESPACE}/${FRONTEND_IMAGE}:latest"
+                    bat "docker push %DOCKER_NAMESPACE%/%FRONTEND_IMAGE%:%TAG%"
+                    bat "docker tag %DOCKER_NAMESPACE%/%FRONTEND_IMAGE%:%TAG% %DOCKER_NAMESPACE%/%FRONTEND_IMAGE%:latest"
+                    bat "docker push %DOCKER_NAMESPACE%/%FRONTEND_IMAGE%:latest"
                 }
             }
         }
@@ -72,8 +72,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "Deploying with Docker Compose..."
-                sh "docker compose down || true"
-                sh "docker compose up -d"
+                bat "docker compose down || exit 0"
+                bat "docker compose up -d"
             }
         }
     }
