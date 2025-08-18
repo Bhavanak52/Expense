@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_NAMESPACE = 'bhavanakajampady'         // ✅ your DockerHub username
+        DOCKER_NAMESPACE = 'bhavanakajampady'         // ✅ Your DockerHub username
         BACKEND_IMAGE = 'expense-backend'
         FRONTEND_IMAGE = 'expense-frontend'
         TAG = "${env.BUILD_NUMBER}"                   // unique tag per build
@@ -13,10 +13,10 @@ pipeline {
             steps {
                 echo "Installing dependencies and building project..."
                 dir('backend') {
-                    bat 'npm ci'
+                    bat 'npm install'
                 }
                 dir('frontend') {
-                    bat 'npm ci'
+                    bat 'npm install'
                     bat 'npm run build'
                 }
             }
@@ -57,10 +57,12 @@ pipeline {
                 echo "Pushing images to Docker Hub..."
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     bat "echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin"
+
                     // Push backend
                     bat "docker push %DOCKER_NAMESPACE%/%BACKEND_IMAGE%:%TAG%"
                     bat "docker tag %DOCKER_NAMESPACE%/%BACKEND_IMAGE%:%TAG% %DOCKER_NAMESPACE%/%BACKEND_IMAGE%:latest"
                     bat "docker push %DOCKER_NAMESPACE%/%BACKEND_IMAGE%:latest"
+
                     // Push frontend
                     bat "docker push %DOCKER_NAMESPACE%/%FRONTEND_IMAGE%:%TAG%"
                     bat "docker tag %DOCKER_NAMESPACE%/%FRONTEND_IMAGE%:%TAG% %DOCKER_NAMESPACE%/%FRONTEND_IMAGE%:latest"

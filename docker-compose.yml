@@ -26,14 +26,13 @@ services:
   mongo:
     image: mongo:latest
     container_name: expense-mongo
-    ports:
-      - "27017:27017"
     networks:
       - expense-net
     volumes:
       - mongo-data:/data/db
-    # Mongo will still be accessible to backend, but not exposed publicly
-    # remove "ports" so it's not accessible from outside
+    # keep ports only if you want external Compass access:
+    # ports:
+    #   - "27017:27017"
 
 networks:
   expense-net:
