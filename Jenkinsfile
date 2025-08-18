@@ -2,21 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_NAMESPACE = 'your-dockerhub-username'   // 🔹 change this
+        DOCKER_NAMESPACE = 'bhavanakajampady'         // ✅ your DockerHub username
         BACKEND_IMAGE = 'expense-backend'
         FRONTEND_IMAGE = 'expense-frontend'
-        TAG = "${env.BUILD_NUMBER}"                    // unique tag per build
+        TAG = "${env.BUILD_NUMBER}"                   // unique tag per build
     }
 
     stages {
-        stage('Clone Repository') {
-            steps {
-                git credentialsId: 'mtech',
-                    url: 'https://gitlab.com/bhavanak52-group/expense-tracker.git',
-                    branch: 'main'
-            }
-        }
-
         stage('Install & Build') {
             steps {
                 echo "Installing dependencies and building project..."
