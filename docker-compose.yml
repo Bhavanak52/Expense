@@ -27,7 +27,7 @@ services:
     image: mongo:latest
     container_name: expense-mongo
     ports:
-      - "27017:27017"
+     
     networks:
       - expense-net
     volumes:
