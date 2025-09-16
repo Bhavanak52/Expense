@@ -1,0 +1,46 @@
+# Specifies the version of the Docker Compose file format
+version: '3.8'
+
+# Defines the services (containers) that make up your application
+services:
+  # The backend service
+  backend:
+    # Tells Docker Compose to build the image from the 'backend' folder
+    build: ./backend
+    # Maps port 4000 on your computer to port 4000 in the container
+    ports:
+      - "4000:4000"
+    # Sets environment variables inside the container
+    environment:
+      - PORT=4000
+      # This connects to the 'mongodb' service defined below
+      - MONGO_URI=mongodb://mongodb:27017/expense-tracker
+    # Makes sure the 'mongodb' service starts before the backend does
+    depends_on:
+      - mongodb
+
+  # The frontend service
+  frontend:
+    # Builds the image from the 'frontend' folder
+    build: ./frontend
+    # Maps port 3000 on your computer to port 80 (nginx) in the container
+    ports:
+      - "3000:80"
+    # Makes sure the backend is running before the frontend starts
+    depends_on:
+      - backend
+
+  # The database service
+  mongodb:
+    # Uses the official 'mongo' image from Docker Hub
+    image: mongo:latest
+    # Maps the database port so you can connect to it from your computer if needed
+    ports:
+      - "27017:27017"
+    # Persists the database data on your computer's disk
+    volumes:
+      - mongo-data:/data/db
+
+# Defines the named volume for persistent database storage
+volumes:
+  mongo-data:

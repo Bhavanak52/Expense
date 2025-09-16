@@ -1,0 +1,7 @@
+/* You can add this to frontend/src/index.css */
+body {
+  margin: 0;
+  font-family: sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
