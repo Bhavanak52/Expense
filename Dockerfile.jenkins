@@ -1,0 +1,13 @@
+    # This Dockerfile defines the environment where our Jenkins jobs will run.
+    # We start from an image that already has the Docker command line tool.
+    FROM docker:24.0.5
+
+    # Install Node.js and npm using the Alpine package manager (apk)
+    RUN apk add --update nodejs npm
+
+    # Install Python and pip, which are required for docker-compose
+    RUN apk add --update python3 py3-pip
+
+    # Use pip to install docker-compose
+    RUN pip3 install docker-compose
+    
